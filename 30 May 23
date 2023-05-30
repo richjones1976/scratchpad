@@ -1,0 +1,34 @@
+import pandas as pd
+
+# assuming df is your DataFrame and 'category' is your column of interest
+grouped = df.groupby('category')
+
+dfs = {name: group for name, group in grouped}
+
+
+df_A = dfs['A']
+
+stats = {}
+for category, df in dfs.items():
+    min_height = df['height'].min()
+    max_height = df['height'].max()
+    min_weight = df['weight'].min()
+    max_weight = df['weight'].max()
+    stats[category] = {
+        'min_height': min_height,
+        'max_height': max_height,
+        'min_weight': min_weight,
+        'max_weight': max_weight
+    }
+    
+stats_A = stats['A']
+print(stats_A)
+
+def get_category(person, stats):
+    for category, values in stats.items():
+        if values['min_height'] <= person['height'] <= values['max_height'] and \
+           values['min_weight'] <= person['weight'] <= values['max_weight']:
+            return category
+    return 'unknown'  # return some default category if no match
+
+df['category'] = df.apply(lambda row: get_category(row, stats), axis=1)
